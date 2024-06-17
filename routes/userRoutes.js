@@ -1,16 +1,14 @@
-const userCtrl = require('../controllers/userController')
+const express = require('express');
+const userCtrl = require('../controllers/userController');
+const router = express.Router();
 
-// router
-const router = require('express').Router()
+// User routes
+router.post('/register', userCtrl.createUser);
+router.post('/login', userCtrl.loginUser);
+router.get('/allUsers', userCtrl.getAllUsers);
 
+router.get('/:id', userCtrl.getOneUser);
+router.patch('/:id', userCtrl.updateUser);
+router.delete('/:id', userCtrl.deleteUser);
 
-// user routers
-
-router.post('/addUser', userCtrl.addUser)
-router.get('/allUsers', userCtrl.getAllUsers)
-
-router.get('/:id', userCtrl.getOneUser)
-router.get('/:id', userCtrl.updateUser)
-router.get('/:id', userCtrl.deleteUser)
-
-module.exports = router
+module.exports = router;

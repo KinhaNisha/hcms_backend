@@ -1,52 +1,99 @@
-const db = require('../models')
+const db = require('../models');
+const User = db.users;
 
-const User = db.users
+// Create user (registration)
+const createUser = async (req, res) => {
+    const { firstName, lastName, email, password, role, mobileNo, DOB, address } = req.body;
 
-// 1. create user
-const addUser = async (req, res) => {
-    let data = {
-        firstName: req.body.firstName,
-        lastName: req.body.lastName,
-        email: req.body.email,
-        password: req.body.password
+    if (!password || password.length < 8 || password.length > 50) {
+        return res.status(400).send({ error: 'Password must be between 8 and 50 characters' });
+    }
+    
+    // Check if the role is admin, if so, reject the registration
+    if (role === 'admin') {
+        return res.status(403).send({ error: 'Registration not allowed for admin users' });
     }
 
-    const user = await User.create(data)
-    res.status(200).send(user)
-    console.log(user)
-}
+    try {
+        const user = await User.create({ firstName, lastName, email, password, role, mobileNo, DOB, address });
+        res.status(201).send({ success: true, user });
+    } catch (error) {
+        res.status(500).send({ error: error.message });
+    }
+};
 
-// 2. get all users
+// Get all users
 const getAllUsers = async (req, res) => {
-    let users = await User.findAll({})
-    res.status(200).send(users)
-}
+    try {
+        const users = await User.findAll();
+        res.status(200).send(users);
+    } catch (error) {
+        res.status(500).send({ error: error.message });
+    }
+};
 
-// 3. get specific user by id
+// Get specific user by id
 const getOneUser = async (req, res) => {
-    let id = req.params.id
-    const user = await User.findOne({ where: {id: id}})
-    res.status(200).send(user)
-}
+    try {
+        const user = await User.findOne({ where: { id: req.params.id } });
+        if (!user) {
+            return res.status(404).send({ error: 'User not found' });
+        }
+        res.status(200).send(user);
+    } catch (error) {
+        res.status(500).send({ error: error.message });
+    }
+};
 
-// 4. update user by id
-const updateUser = async (req,res) => {
-    let id = req.params.id
-    const user = await User.update(req.body, { where: { id: id}})
-    res.status(200).send(user)
-}
+// Update user by id
+const updateUser = async (req, res) => {
+    try {
+        const user = await User.update(req.body, { where: { id: req.params.id } });
+        if (!user) {
+            return res.status(404).send({ error: 'User not found' });
+        }
+        res.status(200).send(user);
+    } catch (error) {
+        res.status(500).send({ error: error.message });
+    }
+};
 
-// 5. delete user by id
+// Delete user by id
 const deleteUser = async (req, res) => {
-    let id = req.params.id
-    await User.destroy({where: {id: id}})
-    res.status(200).send('User deleted successfully.')
-}
+    try {
+        await User.destroy({ where: { id: req.params.id } });
+        res.status(200).send({ success: true, message: 'User deleted successfully.' });
+    } catch (error) {
+        res.status(500).send({ error: error.message });
+    }
+};
+
+// User login
+const loginUser = async (req, res) => {
+    const { email, password } = req.body;
+
+    try {
+        const user = await User.findOne({ where: { email } });
+        if (!user) {
+            return res.status(400).send({ error: 'User not found' });
+        }
+
+        const isMatch = await user.comparePassword(password);
+        if (!isMatch) {
+            return res.status(400).send({ error: 'Invalid credentials' });
+        }
+
+        res.status(200).send({ success: true, user });
+    } catch (error) {
+        res.status(500).send({ error: error.message });
+    }
+};
 
 module.exports = {
-    addUser,
+    createUser,
     getAllUsers,
     getOneUser,
     updateUser,
     deleteUser,
-}
+    loginUser
+};

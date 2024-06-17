@@ -14,7 +14,7 @@ app.use(express.urlencoded({extended: true}))
 
 // routes
 const router = require('./routes/userRoutes')
-app.use('/api/users', router)
+app.use('/api/v1/users', router)
 
 
 
