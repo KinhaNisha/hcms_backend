@@ -1,24 +1,28 @@
-const express = require('express')
-const cors = require('cors')
+const express = require('express');
+const cors = require('cors');
 
-const app = express()
+const app = express();
 
-// port
-const PORT = process.env.PORT || 8080
+// Port
+const PORT = process.env.PORT || 8080;
 
+// CORS options
+const corsOptions = {
+    origin: 'http://localhost:3000', 
+    methods: ['GET', 'POST', 'PATCH', 'DELETE'], 
+    allowedHeaders: ['Content-Type', 'Authorization'] 
+};
 
-// middlewares
-app.use(express.json())
+// Middlewares
+app.use(cors(corsOptions));
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
-app.use(express.urlencoded({extended: true}))
+// Routes
+const userRouter = require('./routes/userRoutes');
+app.use('/api/v1/users', userRouter);
 
-// routes
-const router = require('./routes/userRoutes')
-app.use('/api/v1/users', router)
-
-
-
-// server
+// Server
 app.listen(PORT, () => {
-    console.log(`server is running on port: ${PORT}`)
-})
+    console.log(`Server is running on port: ${PORT}`);
+});

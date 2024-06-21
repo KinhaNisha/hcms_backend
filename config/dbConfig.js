@@ -4,6 +4,7 @@ module.exports = {
     PASSWORD: 'mysql1234',
     DB: 'hcms',
     dialect: 'mysql',
+    logging: 'false',
 
     pool: {
         max: 5,

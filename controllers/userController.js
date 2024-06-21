@@ -3,11 +3,11 @@ const User = db.users;
 
 // Create user (registration)
 const createUser = async (req, res) => {
-    const { firstName, lastName, email, password, role, mobileNo, DOB, address } = req.body;
+    const { name, email, password, role, mobileNo, DOB, address } = req.body;
 
-    if (!password || password.length < 8 || password.length > 50) {
-        return res.status(400).send({ error: 'Password must be between 8 and 50 characters' });
-    }
+    // if (!password || password.length < 8 || password.length > 50) {
+    //     return res.status(400).send({ error: 'Password must be between 8 and 50 characters' });
+    // }
     
     // Check if the role is admin, if so, reject the registration
     if (role === 'admin') {
@@ -15,7 +15,11 @@ const createUser = async (req, res) => {
     }
 
     try {
-        const user = await User.create({ firstName, lastName, email, password, role, mobileNo, DOB, address });
+        const existingUser = await User.findOne({ where: { email } });
+        if (existingUser) {
+            return res.status(400).send({ error: 'Email already registered' });
+        }
+        const user = await User.create({ name, email, password, role, mobileNo, DOB, address });
         res.status(201).send({ success: true, user });
     } catch (error) {
         res.status(500).send({ error: error.message });
