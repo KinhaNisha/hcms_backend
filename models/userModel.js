@@ -60,14 +60,16 @@ module.exports = (sequelize, DataTypes) => {
         paranoid: true,
         hooks: {
             beforeCreate: async (user) => {
-                user.password = await bcrypt.hash(user.password, 10);
+              const salt = await bcrypt.genSaltSync(12);
+              user.password = await bcrypt.hash(user.password, salt);
             },
             beforeUpdate: async (user) => {
-                if (user.changed('password')) {
-                    user.password = await bcrypt.hash(user.password, 10);
-                }
+              if (user.changed('password')) {
+                const salt = await bcrypt.genSaltSync(12);
+                user.password = await bcrypt.hash(user.password, salt);
+              }
             }
-        }
+          }
     });
 
     User.prototype.comparePassword = function (password) {

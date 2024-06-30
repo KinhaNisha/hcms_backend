@@ -1,5 +1,6 @@
 const express = require('express');
 const cors = require('cors');
+require('dotenv').config();
 
 const app = express();
 
@@ -9,7 +10,7 @@ const PORT = process.env.PORT || 8080;
 // CORS options
 const corsOptions = {
     origin: 'http://localhost:3000', 
-    methods: ['GET', 'POST', 'PATCH', 'DELETE'], 
+    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'], 
     allowedHeaders: ['Content-Type', 'Authorization'] 
 };
 
