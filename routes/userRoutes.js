@@ -21,4 +21,13 @@ router.put('/:id', authenticate, validateUser('register'), checkValidation, user
 // Delete user by id
 router.delete('/:id', authenticate, userCtrl.deleteUser);
 
+// Get profile for authenticated user
+router.get('/profile', authenticate, userCtrl.getProfile);
+router.get('/profile/history', authenticate, userCtrl.getUserHistory);
+router.get('/profile/reports', authenticate, userCtrl.getUserReports);
+router.get('/profile/appointments', authenticate, userCtrl.getUserAppointments);
+router.get('/profile/bills', authenticate, userCtrl.getUserBills);
+router.get('/profile/prescriptions', authenticate, userCtrl.getUserPrescriptions);
+
+
 module.exports = router;

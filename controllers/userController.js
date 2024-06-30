@@ -93,6 +93,55 @@ const loginUser = async (req, res) => {
         res.status(500).send({ error: error.message });
     }
 };
+const getProfile = async (req, res) => {
+    try {
+        const user = await User.findByPk(req.user.id, {
+            attributes: { exclude: ['password'] }  // Exclude password from response
+        });
+        if (!user) {
+            return res.status(404).send({ error: 'User not found' });
+        }
+        res.status(200).send(user);
+    } catch (error) {
+        res.status(500).send({ error: error.message });
+    }
+};
+
+// Update user profile
+const updateUserProfile = async (req, res) => {
+    try {
+        const [updated] = await User.update(req.body, { where: { id: req.user.id } });
+
+        if (updated === 0) {
+            return res.status(404).send({ error: 'User not found' });
+        }
+
+        const updatedUser = await User.findByPk(req.user.id, { attributes: { exclude: ['password'] } });
+        res.status(200).send({ message: 'Profile updated successfully', user: updatedUser });
+    } catch (error) {
+        res.status(500).send({ error: error.message });
+    }
+};
+
+const getUserHistory = async (req, res) => {
+    // Implement logic to fetch user history
+};
+
+const getUserReports = async (req, res) => {
+    // Implement logic to fetch user reports
+};
+
+const getUserAppointments = async (req, res) => {
+    // Implement logic to fetch user appointments
+};
+
+const getUserBills = async (req, res) => {
+    // Implement logic to fetch user bills
+};
+
+const getUserPrescriptions = async (req, res) => {
+    // Implement logic to fetch user prescriptions
+};
 
 module.exports = {
     registerUser,
@@ -100,5 +149,13 @@ module.exports = {
     getOneUser,
     updateUser,
     deleteUser,
-    loginUser
+    loginUser,
+    getProfile,
+    updateUserProfile,
+    getUserHistory,
+    getUserReports,
+    getUserAppointments,
+    getUserBills,
+    getUserPrescriptions
 };
+
